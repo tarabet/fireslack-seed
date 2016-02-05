@@ -16,9 +16,16 @@
         channelsCtrl.getDispayName = Users.getDisplayName;
         channelsCtrl.getGravatar = Users.getGravatar;
 
+        channelsCtrl.users = Users.all;
+
+        Users.setOnline(profile.$id);
+
         channelsCtrl.logout = function() {
-            Auth.$unauth();
-            $state.go('home');
+            channelsCtrl.profile.online = null;
+            channelsCtrl.profile.$save().then(function() {
+                Auth.$unauth();
+                $state.go('home');
+            });
         };
 
         channelsCtrl.newChannel = {
@@ -27,9 +34,6 @@
 
         channelsCtrl.createChannel = function() {
             channelsCtrl.channels.$add(channelsCtrl.newChannel).then(function(ref) {
-                //channelsCtrl.newChannel = {
-                //    name: ''
-                //}
                 $state.go('channels.messages', {channelId: ref.key()});
             });
         }
